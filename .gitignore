@@ -1,0 +1,46 @@
+
+Build artifacts
+zig-cache/
+zig-out/
+*.o
+*.obj
+*.exe
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+Generated files
+*.ll
+*.s
+*.bc
+*.asm
+
+Cache
+.acero_cache/
+.cache/
+*.cache
+
+IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+OS
+.DS_Store
+Thumbs.db
+
+Dependencies
+deps/
+third_party/
+
+Logs
+*.log
+logs/
+
+Temporary files
+tmp/
+temp/

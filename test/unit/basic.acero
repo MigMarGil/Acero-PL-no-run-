@@ -1,0 +1,123 @@
+// Tests unitarios básicos
+import std.test;
+
+fn test_arithmetic() -> bool {
+    let a: i32 = 10;
+    let b: i32 = 20;
+    
+    test.assert(a + b == 30, "Suma incorrecta");
+    test.assert(b - a == 10, "Resta incorrecta");
+    test.assert(a * b == 200, "Multiplicación incorrecta");
+    test.assert(b / a == 2, "División incorrecta");
+    
+    return true;
+}
+
+fn test_variables() -> bool {
+    let x = 42; // Inferencia a i32
+    let y: f64 = 3.14;
+    let z = "test";
+    
+    test.assert(x == 42, "Entero incorrecto");
+    test.assert(y > 3.0, "Float incorrecto");
+    test.assert(z == "test", "String incorrecto");
+    
+    // Variables mutables
+    let mut counter = 0;
+    counter += 1;
+    test.assert(counter == 1, "Mutable incorrecto");
+    
+    return true;
+}
+
+fn test_control_flow() -> bool {
+    // If-else
+    let x = 10;
+    let result: string;
+    
+    if (x > 5) {
+        result = "mayor";
+    } else {
+        result = "menor";
+    }
+    
+    test.assert(result == "mayor", "If-else incorrecto");
+    
+    // While
+    let mut i = 0;
+    while (i < 5) {
+        i += 1;
+    }
+    test.assert(i == 5, "While incorrecto");
+    
+    return true;
+}
+
+fn test_functions() -> bool {
+    fn add(a: i32, b: i32) -> i32 {
+        return a + b;
+    }
+    
+    fn factorial(n: i32) -> i32 {
+        if (n <= 1) return 1;
+        return n * factorial(n - 1);
+    }
+    
+    test.assert(add(2, 3) == 5, "Función add incorrecta");
+    test.assert(factorial(5) == 120, "Factorial incorrecto");
+    
+    return true;
+}
+
+fn test_regions() -> bool {
+    // Stack (default)
+    let stack_var: i32 = 42;
+    
+    // Arena
+    let arena = mem.Arena.new();
+    let arena_var = arena.alloc(i32, 10);
+    arena.free();
+    
+    // Global
+    global GLOBAL_VALUE: i32 = 100;
+    test.assert(GLOBAL_VALUE == 100, "Global incorrecto");
+    
+    return true;
+}
+
+// Test runner
+fn main() -> i32 {
+    let tests = []fn() -> bool{
+        test_arithmetic,
+        test_variables,
+        test_control_flow,
+        test_functions,
+        test_regions,
+    };
+    
+    let mut passed = 0;
+    let mut failed = 0;
+    
+    for (tests) |test_fn| {
+        io.print("Running test: ", test_fn.name, "... ");
+        
+        if (test_fn()) {
+            io.println("✅");
+            passed += 1;
+        } else {
+            io.println("❌");
+            failed += 1;
+        }
+    }
+    
+    io.println("\nResults:");
+    io.println("  Passed: ", passed);
+    io.println("  Failed: ", failed);
+    io.println("  Total: ", passed + failed);
+    
+    if (failed > 0) {
+        return 1;
+    }
+    
+    return 0;
+}

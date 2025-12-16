@@ -1,0 +1,47 @@
+// Programa "Hola Mundo" en ACERO
+import std.io;
+
+fn main() {
+    io.println("¡Hola, Mundo!");
+    
+    // Variables con inferencia de tipos
+    let mensaje = "Bienvenido a ACERO";
+    let version = 0.1;
+    
+    // Tipos explícitos
+    let contador: i32 = 42;
+    let pi: f64 = 3.14159265359;
+    
+    // Operaciones
+    let resultado = contador * 2 + 10;
+    
+    io.println("Mensaje: ", mensaje);
+    io.println("Versión: ", version);
+    io.println("Contador: ", contador);
+    io.println("PI: ", pi);
+    io.println("Resultado: ", resultado);
+    
+    // Control de flujo
+    if (resultado > 100) {
+        io.println("Resultado es grande");
+    } else {
+        io.println("Resultado es pequeño");
+    }
+    
+    // Bucle
+    let i = 0;
+    while (i < 5) {
+        io.println("Iteración: ", i);
+        i += 1;
+    }
+    
+    // Función local
+    fn saludar(nombre: string) {
+        io.println("Hola, ", nombre, "!");
+    }
+    
+    saludar("Programador");
+    
+    // Retorno exitoso
+    return 0;
+}

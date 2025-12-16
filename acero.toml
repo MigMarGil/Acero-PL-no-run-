@@ -1,0 +1,49 @@
+[project]
+name = "acero"
+version = "0.1.0"
+description = "Lenguaje de sistemas con memoria predictiva"
+authors = ["ACERO Team"]
+license = "MIT"
+repository = "https://github.com/acero-lang/acero"
+readme = "README.md"
+
+[build]
+compiler = "zig"
+min_zig_version = "0.12.0"
+optimize = "ReleaseSafe"
+target = "native"
+
+[features]
+default = ["std", "test"]
+std = ["mem", "math", "os"]
+mem = ["regions", "arenas"]
+concurrency = ["actors", "channels"]
+incremental = ["cache", "semantic-hashing"]
+
+[dependencies.llvm]
+version = ">=15.0.0"
+required = true
+
+[dev-dependencies]
+test-utils = { path = "./test/utils" }
+
+[[bin]]
+name = "acero"
+path = "src/main.zig"
+
+[[test]]
+name = "unit"
+path = "test/unit/main.zig"
+
+[[test]]
+name = "integration"
+path = "test/integration/main.zig"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.release]
+opt-level = 3
+debug = false
+lto = true

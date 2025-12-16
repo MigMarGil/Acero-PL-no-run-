@@ -1,0 +1,182 @@
+// Motor de juegos simple en ACERO
+import std.math;
+import std.mem;
+import std.thread;
+
+// Tipos para el juego
+type Vec2 {
+    x: f32
+    y: f32
+    
+    fn add(self: Vec2, other: Vec2) -> Vec2 {
+        return Vec2{
+            x: self.x + other.x,
+            y: self.y + other.y,
+        };
+    }
+    
+    fn scale(self: Vec2, factor: f32) -> Vec2 {
+        return Vec2{
+            x: self.x * factor,
+            y: self.y * factor,
+        };
+    }
+}
+
+type Entity {
+    id: u32
+    position: Vec2
+    velocity: Vec2
+    health: i32
+    is_active: bool
+}
+
+type GameState {
+    entities: []Entity
+    score: u64
+    time_elapsed: f64
+    is_running: bool
+}
+
+// Actor para física
+actor PhysicsActor @heap {
+    state: PhysicsWorld
+    
+    fn handle(msg: PhysicsUpdate) -> PhysicsResult @message {
+        // Simular física
+        let dt = msg.delta_time;
+        
+        for (state.entities) |*entity| {
+            if (!entity.is_active) continue;
+            
+            // Integración de velocidad
+            entity.position = entity.position.add(
+                entity.velocity.scale(dt)
+            );
+            
+            // Gravedad
+            entity.velocity.y += 9.8 * dt;
+            
+            // Colisiones simples
+            if (entity.position.y < 0) {
+                entity.position.y = 0;
+                entity.velocity.y = -entity.velocity.y * 0.8; // Rebote
+            }
+        }
+        
+        return PhysicsResult{ success: true };
+    }
+}
+
+// Actor para renderizado
+actor RenderActor @heap {
+    state: RenderState
+    
+    fn handle(msg: RenderFrame) -> RenderResult @message {
+        // Limpiar pantalla
+        state.clear();
+        
+        // Renderizar entidades
+        for (msg.entities) |entity| {
+            if (!entity.is_active) continue;
+            
+            state.draw_entity(entity);
+        }
+        
+        // Renderizar UI
+        state.draw_text("Score: " ++ std.str.from_u64(msg.score), 10, 10);
+        state.draw_text("FPS: " ++ std.str.from_f64(msg.fps), 10, 30);
+        
+        state.swap_buffers();
+        
+        return RenderResult{ success: true };
+    }
+}
+
+// Sistema principal del juego
+fn game_main() -> i32 @stack {
+    // Inicializar estado
+    global game_state = GameState{
+        entities: mem.alloc(Entity, 100) @arena,
+        score: 0,
+        time_elapsed: 0.0,
+        is_running: true,
+    };
+    
+    // Crear actores
+    let physics_actor = spawn PhysicsActor();
+    let render_actor = spawn RenderActor();
+    
+    // Bucle principal del juego
+    let last_time = time.now();
+    
+    while (game_state.is_running) {
+        let current_time = time.now();
+        let delta_time = (current_time - last_time) / 1000.0; // En segundos
+        last_time = current_time;
+        
+        // Procesar entrada
+        process_input(&game_state);
+        
+        // Actualizar física
+        let physics_msg = PhysicsUpdate{
+            entities: game_state.entities,
+            delta_time: delta_time,
+        };
+        
+        let physics_result = physics_actor->physics_msg;
+        
+        // Actualizar lógica del juego
+        update_game(&game_state, delta_time);
+        
+        // Renderizar
+        let render_msg = RenderFrame{
+            entities: game_state.entities,
+            score: game_state.score,
+            fps: 1.0 / delta_time,
+        };
+        
+        let render_result = render_actor->render_msg;
+        
+        // Control de FPS
+        let frame_time = time.now() - current_time;
+        let target_frame_time = 16; // ~60 FPS
+        
+        if (frame_time < target_frame_time) {
+            thread.sleep(target_frame_time - frame_time);
+        }
+        
+        game_state.time_elapsed += delta_time;
+    }
+    
+    // Limpiar
+    mem.free(game_state.entities);
+    
+    return 0;
+}
+
+fn process_input(state: *GameState) {
+    // TODO: Procesar entrada del usuario
+    _ = state;
+}
+
+fn update_game(state: *GameState, dt: f64) {
+    // Actualizar lógica del juego
+    state.score += @intCast(u64, dt * 10);
+    
+    // Verificar condición de fin
+    if (state.time_elapsed > 60.0) { // 60 segundos
+        state.is_running = false;
+    }
+}
+
+// Punto de entrada
+fn main() -> i32 {
+    io.println("Iniciando motor de juegos ACERO...");
+    
+    let result = game_main();
+    
+    io.println("Juego terminado. Puntuación final: ", result);
+    
+    return result;
+}
