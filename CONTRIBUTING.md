@@ -38,8 +38,8 @@ zig build
 
 # Ejecutar tests
 zig build test
-
-2. Flujo de Trabajo
+```
+### 2. Flujo de Trabajo
 Crear una issue para discutir cambios
 
 Hacer fork del repositorio
@@ -52,7 +52,7 @@ Ejecutar pruebas: make test
 
 Crear Pull Request
 
-3. Convenciones de Código
+### 3. Convenciones de Código
 Zig
 Seguir el estilo oficial de Zig
 
@@ -69,7 +69,7 @@ API consistente con la filosofía del lenguaje
 
 Documentación en docs/
 
-4. Áreas de Contribución
+### 4. Áreas de Contribución
 Prioridad Alta
 Backend LLVM completo
 
@@ -95,8 +95,8 @@ Profiling tools
 
 Documentation website
 
-5. Escribir Tests
-acero
+### 5. Escribir Tests
+```acero
 // test/unit/nueva_feature.acero
 import std.test;
 
@@ -110,7 +110,8 @@ fn main() -> i32 {
     if (!test_nueva_funcionalidad()) return 1;
     return 0;
 }
-6. Escribir Documentación
+```
+### 6. Escribir Documentación
 Especificación
 Actualizar docs/SPEC.md para cambios en el lenguaje
 
@@ -119,7 +120,7 @@ Documentar nuevas características
 Incluir ejemplos de uso
 
 Comentarios de Código
-zig
+```zig
 /// Función que hace algo importante
 /// # Parámetros
 /// - `input`: Valor de entrada
@@ -132,7 +133,8 @@ zig
 pub fn funcion_ejemplo(input: i32) i32 {
     return input * 2;
 }
-7. Proceso de Code Review
+```
+### 7. Proceso de Code Review
 Revisión de Código
 
 ¿Sigue las convenciones?
@@ -185,6 +187,7 @@ text
 ```acero
 // Código mínimo que reproduce el bug
 text
+```
 
 ### 9. Solicitar Características
 
